@@ -2,7 +2,7 @@
 ssh ehanse@hpc3.rcic.uci.edu
 ## use your uci credentials to login. If offsite login through the vpn client
 
-## Open a SLURM sessio
+## Open a SLURM session
 srun --pty /bin/bash -i
 ## command line will change to [user@hpc3-l18-04:~]$
 
@@ -21,17 +21,22 @@ Star --help
 ##Activate the STAR software
 module load star
 
-## Read in the genome assembly and annotation
-STAR --runThreadN 62 \
+## STEP 1 of alignment. Read in the genome assembly and annotation
+STAR --runThreadN 1 \
      --runMode genomeGenerate \
      --genomeDir /data/homezvol1/ehanse/Kong_RNASeq/data/Genome_Directory \
-     --genomeFastaFiles /data/homezvol1/ehanse/Kong_RNASeq/data/mm39/chr1.fa \
-     --sjdbGTFfile /data/homezvol1/ehanse/Kong_RNASeq/data/GTF_Dir/Mus_musculus.GRCm39.105.gtf \
+     --genomeFastaFiles /data/homezvol1/ehanse/Kong_RNASeq/data/mm39/GRCm39.genome.fa \
+     --sjdbGTFfile /data/homezvol1/ehanse/Kong_RNASeq/data/GTF_Dir/gencode.vM28.annotation.gtf \
      --sjdbOverhang 99
-     
+    
+## Step 2 of alignment. Mapping to the genome using the assembled genome file just created in step 1
 
 
-## Check directory permissions, you need read/write/executable
-ls -lah
-chmod a+x /data/homezvol1/ehanse/Kong_RNASeq/data/mm39/Mus_musculus.GRCm39.105.gtf
-ls -lah
+
+
+
+
+## Close your session
+
+exit
+logout

@@ -52,5 +52,5 @@ sigs <- sigs[sigs$padj < 0.05,]
 sigs
 
 ## These are the significant genes list and will be used for the next step
-write.csv(sigs,"sigs.list.out")
+write.csv(sigs,"deseq2_results.csv")
 

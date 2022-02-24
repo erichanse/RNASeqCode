@@ -18,7 +18,8 @@ library(viridis)
 
 # load data into a data frame
 
-PreData <- read.csv("named.parsed.limited.log2.csv", header=T, row.names = "gene")
+PreData <- read.csv("AfterLog2.DESeq2.SumFiftyCounts.csv", header=T)
+PreData <- column_to_rownames(PreData, "X")
 
 
 ## convert the data fram to a matrix that only includes genes that have a read
@@ -33,4 +34,4 @@ pheatmap(data_subset,
          show_rownames     = FALSE,
          drop_levels       = TRUE,
          fontsize          = 14,
-         main              = "020222 Organoid RNASeq")
+         main              = "Bryan RNASeq")

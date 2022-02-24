@@ -1,12 +1,7 @@
 ## DESeq2
 ##
 
-
----
-  title: "DESeq2"
-  output: html_notebook
----
-## load in the two librarys we need here to complete these tasks
+## load in the  library s we need here to complete these tasks
 library(DESeq2)
 library (ggplot2) 
 library(tibble)
@@ -23,7 +18,7 @@ SumFiftyCounts <- Counts[which(rowSums(Counts) > 50),]
 SumFiftyCounts
 
 ## Assign the column headers to the dataframe "condition"
-condition <- factor(c("Con", "Con", "Con", "Con", "Con", "Con", "Con", "Exp","Exp","Exp","Exp","Exp", "Exp", "Exp"))
+condition <- factor(c("C26", "C26", "C26", "CT26", "CT26", "CT26", "CT26", "C26", "C26", "C26", "CT26", "CT26", "CT26", "CT26"))
 ## Change the column headers to the indicated names
 coldata <- data.frame(row.names = colnames(SumFiftyCounts), condition)
 
@@ -50,8 +45,8 @@ write.csv(normalized_counts, file = "DESeq2.SumFiftyCounts.csv")
 
 ## Create a dataframe called res that runs stats package on dds data frame
 ## here we are comparing experimental to control, you can reverse this to change
-## the perspective
-res <- results(dds, contrast = c("condition", "Exp", "Con"))
+## the perspective. HERe the numerator is Exp and denominator is Con.
+res <- results(dds, contrast = c("condition", "CT26", "C26"))
 ## View your results
 view(res)
 ## Cull the list of anything without a value

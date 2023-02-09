@@ -1,0 +1,72 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(gplots)
+library(viridisLite)
+library(RColorBrewer)
+
+```
+
+```{r}
+
+Counts <- as.data.frame(Raw_Counts)
+# Make the first column the row names
+ rownames(Counts) <- Counts$`Compound Method`
+ Counts[,1] = NULL 
+
+
+Counts
+
+```
+```{r}
+# Log base 2 the data
+Log_Counts <- log2(Counts)
+Log_Counts
+
+```
+
+```{r}
+# MAke the data a matrix
+Scaled_Counts <- replace(Log_Counts, is.na(Log_Counts),1)
+#Scaled_Counts <- as.matrix(Log_Counts)
+Scaled_Counts
+
+```
+```{r}
+# Scale the data
+mat.scaled <- t(apply(Scaled_Counts, 1, scale))
+mat.scaled
+```
+
+```{r}
+
+condition <- factor(c("78", "86","98", "52", "66", "83", "89", "63", "82", "80"))
+
+```
+
+
+```{r}
+heatmap.2( mat.scaled, 
+           scale="column", 
+           trace="none", 
+           dendrogram="row",
+           density.info="none",
+           key.title= "Z-score",
+           key.ylab="none",
+           key.xlab="",
+           labCol = condition,
+           offsetRow = 0.1,
+           Colv = "FALSE",
+            
+           
+       
+           main ="Metabolomics",
+     
+           col = inferno(100), )
+```
+

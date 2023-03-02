@@ -1,0 +1,128 @@
+---
+title: "DESEQ2"
+output: html_notebook
+---
+. 
+```{r}
+
+library(DESeq2)
+library(ggplot2) 
+library(tibble)
+library(dplyr)
+library(tidyverse)
+```
+
+```{r}
+##Import featurecounts output file
+##Counts <- read.csv("named.samples.parsed.limited.csv", header = TRUE)  
+Counts <- counts_out
+```
+
+
+```{r}
+##Get rid of anything thats a duplicate
+noDupes <- distinct(Counts, Geneid, .keep_all = TRUE)
+noDupes
+```
+```{r}
+## Assign the geneid to the row name
+noDupes <- column_to_rownames(noDupes, var = "Geneid")
+```
+```{r}
+## Keep only the rows that have a sum of greater than N, this is arbitrary
+SumFiftyCounts <- noDupes[which(rowSums(noDupes) > 25),]
+SumFiftyCounts
+```
+```{r}
+## Assign the column headers to the dataframe "condition"
+condition <- factor(c("Gene","Muc", "Muc", "NonMuc", "Muc", "NonMuc", "NonMuc", "Muc", "Muc", "Muc", "NonMuc"))
+                    
+## Change the column headers to the indicated names
+coldata <- data.frame(row.names = colnames(SumFiftyCounts), condition)
+coldata
+```
+```{r}
+## assign your data set (Counts) to a DESeq data matrix
+dds <- DESeqDataSetFromMatrix(countData=round(SumFiftyCounts), colData = coldata, design = ~condition)
+
+```
+```{r}
+## run DESeq and assign to the data frame dds. This task may take a second
+dds <- DESeq(dds)
+dds
+```
+```{r}
+res <- results(dds, contrast = c("condition", "Muc", "NonMuc"))
+res
+```
+```{r}
+##Trim the list of NA
+sigs <- na.omit(res)
+```
+```{r}
+##Trim the list to only include significant genes
+sigs <- sigs[sigs$padj < 0.05,]
+sigs
+```
+```{r}
+sigs2 <- rlog(dds, blind = FALSE)
+df1 <- assay(sigs2)
+df <- as.data.frame(df1)
+df
+```
+```{r}
+
+df <- tibble::rownames_to_column(df, "Gene")
+df
+```
+
+
+```{r}
+## if you are going to do GSEA analysis you will need to trim the decimals from the ENSEMBL ID
+df$Gene <- sub("\\.\\d+", "", df$Gene)
+df
+```
+```{r}
+#Assign the column names for the samples
+df3 <- df
+colnames(df3)<-condition
+df3
+```
+
+
+
+```{r}
+df[,1]=NULL
+df
+```
+
+```{r}
+##Cull the data to include only the significantly represented genes
+df2 <- tibble::column_to_rownames(df, var = "Geneid")
+df2
+```
+
+
+```{r}
+df3 <- na.omit(df2)
+```
+
+
+```{r}
+df4 <-df2[which(rowSums(df2) > 25),]
+df4
+
+```
+
+
+```{r}
+## Write this to a new file
+write.csv(df4, file = "C:/Users/erich/Downloads/LAMN_vs_ALL_GSEA2.csv")
+
+
+```
+
+```{r}
+write.csv(df, file = "020822deseq2results.csv")
+```
+

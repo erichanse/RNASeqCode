@@ -1,0 +1,111 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(DESeq2)
+library(ggplot2) 
+library(tibble)
+library(dplyr)
+
+```
+
+```{r}
+Counts <- Counts_out
+noDupes <- distinct(Counts, Gene, .keep_all = TRUE)
+```
+
+```{r}
+noDupes <- column_to_rownames(noDupes, var = "Gene")
+```
+
+```{r}
+SumFiftyCounts <- noDupes[which(rowSums(noDupes) > 50),]
+SumFiftyCounts
+```
+
+```{r}
+condition <- factor(c("Con", "Con", "Con", "Con", "Con", "Con", "Pio", "Pio", "Pio", "Pio", "Pio", "Pio"))
+```
+
+```{r}
+coldata <- data.frame(row.names = colnames(SumFiftyCounts), condition)
+
+```
+```{r}
+dds <- DESeqDataSetFromMatrix(countData=round(SumFiftyCounts), colData = coldata, design = ~condition)
+```
+```{r}
+dds <- DESeq(dds)
+```
+```{r}
+vsdata <- vst(dds, blind = FALSE)
+```
+
+
+```{r}
+plotPCA(vsdata, intgroup = "condition")
+```
+
+```{r}
+res <- results(dds, contrast = c("condition", "Pio", "Con"))
+
+```
+
+```{r}
+res
+
+```
+```{r}
+res
+```
+
+```{r}
+
+sigs <- na.omit(res)
+
+```
+
+```{r}
+sigs <- sigs[sigs$padj < 0.05, ]
+```
+
+
+```{r}
+sigs
+```
+
+```{r}
+
+df <- as.data.frame(sigs)
+df
+
+```
+```{r}
+##Use this one to bring into the jupyter notebook to add the geneid names
+write.csv(df, file = "C:/Users/erich/Downloads/LAMN_vs_ALL_DESEQ2.csv")
+```
+```{r}
+## After bringing back from jupyter notebook with the gene names we can manipulate the file a bit more
+
+dff <- read.csv('10523.named.deseq2.csv')
+
+```
+
+
+```{r}
+df.top <- dff [dff$baseMean > 25 & (abs(dff$log2FoldChange) > 2), ]
+df.top
+```
+```{r}
+
+df.top <- df.top[order(df.top$log2FoldChange, decreasing = TRUE), ]
+df.top
+
+
+```
+
+```{r}
+write.csv(df.top, file = "C:/Users/erich/Downloads/LAMN_vs_ALL_DESEQ2_named_ordered.csv")
+```
+

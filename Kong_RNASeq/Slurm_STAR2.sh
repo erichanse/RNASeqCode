@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=Sample_4 
+#SBATCH --job-name=Read_1 
 #SBATCH -p free              
 #SBATCH --nodes=1            
 #SBATCH --ntasks=8
@@ -16,7 +16,7 @@ module purge
 module load star
 STAR --runThreadN 8 \
      --genomeDir /pub/ehanse/Genome_Directory \
-     --readFilesIn /pub/ehanse/Trimmed_Unzipped/020222_4.trim.fastq \
+     --readFilesIn /pub/ehanse/Reads/Read1.fastq /pub/ehanse/Reads/Read2.fastq  \
      --outFilterIntronMotifs RemoveNoncanonical \
-     --outFileNamePrefix 020222_4_ \
+     --outFileNamePrefix 013123_1_ \
      --outSAMtype BAM SortedByCoordinate
